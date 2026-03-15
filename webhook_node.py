@@ -34,8 +34,8 @@ def _to_items(value):
 class BAInputSlot:
     CATEGORY = "api-bridge"
     FUNCTION = "execute"
-    RETURN_TYPES = ("STRING", "IMAGE", "STRING", "STRING", "STRING")
-    RETURN_NAMES = ("text", "image", "video", "variable_name", "input_type")
+    RETURN_TYPES = ()
+    OUTPUT_NODE = False
 
     @classmethod
     def INPUT_TYPES(cls):
@@ -43,9 +43,6 @@ class BAInputSlot:
             "required": {
                 "variable_name": ("STRING", {"default": "input_1", "multiline": False}),
                 "input_type": (["text", "image", "video"], {"default": "text"}),
-                "text": ("STRING", {"default": "", "multiline": True}),
-                "image": ("STRING", {"default": "", "multiline": False}),
-                "video": ("STRING", {"default": "", "multiline": False}),
             },
             "optional": {
                 "text_in": ("STRING", {"forceInput": True}),
@@ -54,22 +51,9 @@ class BAInputSlot:
             },
         }
 
-    def execute(self, variable_name, input_type, text="", image="", video="",
-                text_in=None, image_in=None, video_in=None):
-        out_text = text_in if text_in is not None else text
-        out_image = image_in if image_in is not None else _empty_image()
-        out_video = video_in if video_in is not None else video
-
-        # Keep the selected modality explicit while still exposing all ports.
-        if input_type == "text":
-            out_video = ""
-        elif input_type == "image":
-            out_text = ""
-            out_video = ""
-        elif input_type == "video":
-            out_text = ""
-
-        return (out_text, out_image, out_video, variable_name, input_type)
+    def execute(self, variable_name, input_type, text_in=None, image_in=None, video_in=None):
+        # Definition node only: used for variable declaration and binding via incoming links.
+        return {}
 
 
 class WebhookCallback:
