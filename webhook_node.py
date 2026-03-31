@@ -47,7 +47,7 @@ class BAInputSlot:
             "optional": {
                 "text_in": ("STRING", {"forceInput": True}),
                 "image_in": ("IMAGE",),
-                "video_in": ("STRING", {"forceInput": True}),
+                "video_in": ("VIDEO", {"forceInput": True}),
             },
         }
 
