@@ -73,7 +73,7 @@ class WebhookCallback:
             "optional": {
                 "images": ("IMAGE",),
                 "text": ("STRING", {"forceInput": True}),
-                "video": ("STRING", {"forceInput": True}),
+                "video": ("VIDEO", {"forceInput": True}),
             },
         }
 
