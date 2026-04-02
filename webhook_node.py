@@ -95,8 +95,6 @@ class OpenClawOutput:
         import uuid
 
         output_dir = folder_paths.get_output_directory()
-        counter = getattr(OpenClawOutput, "_counter", 0)
-        OpenClawOutput._counter = counter + 1
 
         if images is not None:
             arr = images.cpu().numpy()
@@ -105,7 +103,8 @@ class OpenClawOutput:
             if arr.ndim == 4:
                 arr = arr[0]
             pil_img = Image.fromarray(arr)
-            fname = f"OpenClawOutput_{counter:04d}.png"
+            # Use uuid to ensure uniqueness across ComfyUI restarts
+            fname = f"OpenClawOutput_{uuid.uuid4().hex[:8]}.png"
             pil_img.save(os.path.join(output_dir, fname))
 
         if video is not None:
