@@ -56,6 +56,46 @@ class BAInputSlot:
         return {}
 
 
+class OpenClawOutput:
+    """
+    Output marker node for OpenClaw polling.
+    This node acts as a passthrough OUTPUT_NODE - it passes through
+    the connected image/video/text and marks them as final outputs.
+
+    ComfyUI's history API records outputs from OUTPUT_NODEs.
+    By connecting your final outputs to this node, OpenClaw can filter
+    history results to only this node's outputs.
+
+    Usage: Connect any combination of images/video/text to this node.
+    All connected outputs will be recorded and returned by OpenClaw.
+    """
+    CATEGORY = "api-bridge"
+    FUNCTION = "execute"
+    OUTPUT_NODE = True
+    RETURN_TYPES = ("IMAGE", "VIDEO", "STRING")
+    RETURN_NAMES = ("images", "videos", "text")
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {},
+            "optional": {
+                "images": ("IMAGE",),
+                "video": ("VIDEO",),
+                "text": ("STRING", {"forceInput": True}),
+            },
+        }
+
+    def execute(self, images=None, video=None, text=None):
+        # Passthrough: return inputs as-is.
+        # ComfyUI records these in /history/{prompt_id} under this node's ID.
+        # OpenClaw filters by class_type="OpenClawOutput" to find this node.
+        img = images if images is not None else _empty_image()
+        vid = video if video is not None else ""
+        txt = text if text is not None else ""
+        return (img, vid, txt)
+
+
 class WebhookCallback:
     CATEGORY = "api-bridge"
     FUNCTION = "execute"
@@ -161,12 +201,14 @@ class WebhookCallback:
         return {}
 
 
-NODE_CLASS_MAPPINGS = {"WebhookCallback": WebhookCallback}
-NODE_CLASS_MAPPINGS.update({
+NODE_CLASS_MAPPINGS = {
+    "WebhookCallback": WebhookCallback,
     "BAInputSlot": BAInputSlot,
-})
+    "OpenClawOutput": OpenClawOutput,
+}
 
 NODE_DISPLAY_NAME_MAPPINGS = {
     "WebhookCallback": "Webhook Callback (API Bridge)",
     "BAInputSlot": "BA Input Slot (Variable)",
+    "OpenClawOutput": "OpenClaw Output (Marker)",
 }
