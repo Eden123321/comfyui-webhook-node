@@ -87,9 +87,33 @@ class OpenClawOutput:
         }
 
     def execute(self, images=None, video=None, text=None):
-        # Passthrough: return inputs as-is.
-        # ComfyUI records these in /history/{prompt_id} under this node's ID.
-        # OpenClaw filters by class_type="OpenClawOutput" to find this node.
+        # Passthrough: return inputs as-is, but also save to output dir
+        # with OpenClawOutput_ prefix so parse_outputs can filter by filename.
+        import numpy as np
+        from PIL import Image
+        import io
+        import uuid
+
+        output_dir = folder_paths.get_output_directory()
+        counter = getattr(OpenClawOutput, "_counter", 0)
+        OpenClawOutput._counter = counter + 1
+
+        if images is not None:
+            arr = images.cpu().numpy()
+            if arr.dtype != np.uint8:
+                arr = (arr * 255).clip(0, 255).astype(np.uint8)
+            if arr.ndim == 4:
+                arr = arr[0]
+            pil_img = Image.fromarray(arr)
+            fname = f"OpenClawOutput_{counter:04d}.png"
+            pil_img.save(os.path.join(output_dir, fname))
+
+        if video is not None:
+            vid_str = str(video)
+            if os.path.exists(vid_str):
+                fname = f"OpenClawOutput_{os.path.basename(vid_str)}"
+                shutil.copy(vid_str, os.path.join(output_dir, fname))
+
         img = images if images is not None else _empty_image()
         vid = video if video is not None else ""
         txt = text if text is not None else ""
