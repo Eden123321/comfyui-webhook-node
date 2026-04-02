@@ -72,8 +72,8 @@ class OpenClawOutput:
     CATEGORY = "api-bridge"
     FUNCTION = "execute"
     OUTPUT_NODE = True
-    RETURN_TYPES = ()
-    RETURN_NAMES = ()
+    RETURN_TYPES = ("IMAGE", "VIDEO", "STRING")
+    RETURN_NAMES = ("images", "videos", "text")
 
     @classmethod
     def INPUT_TYPES(cls):
