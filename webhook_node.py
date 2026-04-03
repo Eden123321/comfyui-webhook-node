@@ -88,7 +88,7 @@ class OpenClawOutput:
 
     def execute(self, images=None, video=None, text=None):
         # Passthrough: return inputs as-is, but also save to output dir
-        # with OpenClawOutput_ prefix so parse_outputs can filter by filename.
+        # with OCOut_ prefix so parse_outputs can filter by filename.
         import numpy as np
         from PIL import Image
         import io
@@ -104,13 +104,13 @@ class OpenClawOutput:
                 arr = arr[0]
             pil_img = Image.fromarray(arr)
             # Use uuid to ensure uniqueness across ComfyUI restarts
-            fname = f"OpenClawOutput_{uuid.uuid4().hex[:8]}.png"
+            fname = f"OCOut_{uuid.uuid4().hex[:8]}.png"
             pil_img.save(os.path.join(output_dir, fname))
 
         if video is not None:
             vid_str = str(video)
             if os.path.exists(vid_str):
-                fname = f"OpenClawOutput_{os.path.basename(vid_str)}"
+                fname = f"OCOut_{os.path.basename(vid_str)}"
                 shutil.copy(vid_str, os.path.join(output_dir, fname))
 
         img = images if images is not None else _empty_image()
