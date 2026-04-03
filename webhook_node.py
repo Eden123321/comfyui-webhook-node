@@ -56,18 +56,10 @@ class BAInputSlot:
         return {}
 
 
-class OpenClawOutput:
+class OCOut:
     """
-    Output marker node for OpenClaw polling.
-    This node acts as a passthrough OUTPUT_NODE - it passes through
-    the connected image/video/text and marks them as final outputs.
-
-    ComfyUI's history API records outputs from OUTPUT_NODEs.
-    By connecting your final outputs to this node, OpenClaw can filter
-    history results to only this node's outputs.
-
-    Usage: Connect any combination of images/video/text to this node.
-    All connected outputs will be recorded and returned by OpenClaw.
+    Output marker node - saves images/videos with OCOut_ prefix and passthrough.
+    parse_outputs filters by OCOut_ prefix to identify final outputs.
     """
     CATEGORY = "api-bridge"
     FUNCTION = "execute"
@@ -227,11 +219,11 @@ class WebhookCallback:
 NODE_CLASS_MAPPINGS = {
     "WebhookCallback": WebhookCallback,
     "BAInputSlot": BAInputSlot,
-    "OpenClawOutput": OpenClawOutput,
+    "OCOut": OCOut,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
     "WebhookCallback": "Webhook Callback (API Bridge)",
     "BAInputSlot": "BA Input Slot (Variable)",
-    "OpenClawOutput": "OpenClaw Output (Marker)",
+    "OCOut": "OC Out (Marker)",
 }
